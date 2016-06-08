@@ -9,6 +9,15 @@ const defaults = {
   port: 8989
 }
 
+var dbOpts = {
+    "url": "mongodb://localhost:27017/test",
+    "settings": {
+        "db": {
+            "native_parser": false
+        }
+    }
+};
+
 function build (opts, cb) {
   opts = xtend(defaults, opts)
 
@@ -17,8 +26,12 @@ function build (opts, cb) {
   server.connection({ port: opts.port })
 
   server.register([
-    require('./lib/myplugin')
-  ], (err) => {
+  {
+    register: require('hapi-mongodb'),
+    options: dbOpts
+  },{
+    register: require('./lib/myplugin')
+  }], (err) => {
     cb(err, server)
   })
 
